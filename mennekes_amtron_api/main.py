@@ -41,6 +41,12 @@ def set_setting_current_limit(current_limit: float):
     api.state.charger.write_float(0x0302, current_limit)
     return get_setting_current_limit()
 
+@api.put('/setting/current/limit/adjust')
+def set_setting_current_limit_adjust(adjustment: float):
+    current_limit = get_setting_current_limit()['setting_current_limit']
+    current_limit += adjustment
+    return set_setting_current_limit(current_limit)
+
 @api.get('/actual/power/overall')
 def get_actual_power_overall():
     return {'actual_power_overall': api.state.charger.read_float(0x0512)}
