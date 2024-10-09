@@ -9,7 +9,7 @@ api = FastAPI()
 @api.get('/status/evse')
 def get_status_evse():
     """
-    @brief Get the current status of the EVSE
+    Get the current status of the EVSE
     """
     evse_statuses = {
         0: 'Not initialized',
@@ -27,7 +27,7 @@ def get_status_evse():
 @api.get('/status/authorization')
 def get_status_authorization():
     """
-    @brief Get the current authorization status
+    Get the current authorization status
     """
     authorization_statuses = {
         0: 'Authorization not required',
@@ -40,14 +40,14 @@ def get_status_authorization():
 @api.get('/settings/current-limit')
 def get_settings_current_limit():
     """
-    @brief Get the maximal current (amperage) limit per phase
+    Get the maximal current (amperage) limit per phase
     """
     return {'current_limit': api.state.charger.read_float(0x0302)}
 
 @api.put('/settings/current-limit')
 def set_settings_current_limit(current_limit: float):
     """
-    @brief Set the maximal current (amperage) limit per phase
+    Set the maximal current (amperage) limit per phase
     """
     api.state.charger.write_float(0x0302, current_limit)
     return get_settings_current_limit()
@@ -55,21 +55,21 @@ def set_settings_current_limit(current_limit: float):
 @api.get('/sessions/current/power')
 def get_sessions_current_power():
     """
-    @brief Get the power of the current charging session
+    Get the power of the current charging session
     """
     return {'current_power': api.state.charger.read_float(0x0512)}
 
 @api.get('/sessions/current/energy')
 def get_sessions_current_energy():
     """
-    @brief Get the total energy transferred during the current charging session
+    Get the total energy transferred during the current charging session
     """
     return {'current_energy': api.state.charger.read_float(0x0B02)}
 
 @api.get('/sessions/current/duration')
 def get_sessions_current_duration():
     """
-    @brief Get the duration of the current charging session
+    Get the duration of the current charging session
     """
     return {'session_duration': api.state.charger.read_float(0x0B04)}
 
