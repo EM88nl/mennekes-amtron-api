@@ -8,7 +8,10 @@ api = FastAPI()
 
 @api.get('/status/evse')
 def get_status_evse():
-    map = {
+    """
+    @brief Get the current status of the EVSE
+    """
+    evse_statuses = {
         0: 'Not initialized',
         1: 'Idle',
         2: 'EV connected',
@@ -19,42 +22,55 @@ def get_status_evse():
         7: 'Service mode',
     }
     data = api.state.charger.read_register(0x0100)
-    return {'evse_status': data, 'description': map[data]}
+    return {'evse_status': data, 'description': evse_statuses[data]}
 
 @api.get('/status/authorization')
 def get_status_authorization():
-    map = {
+    """
+    @brief Get the current authorization status
+    """
+    authorization_statuses = {
         0: 'Authorization not required',
         1: 'Authorized',
         2: 'Not authorized',
     }
     data = api.state.charger.read_register(0x0101)
-    return {'authorization_status': data, 'description': map[data]}
+    return {'authorization_status': data, 'description': authorization_statuses[data]}
 
-@api.get('/setting/current/limit')
-def get_setting_current_limit():
-    data = api.state.charger.read_float(0x0302)
-    return {'setting_current_limit': data}
+@api.get('/settings/current-limit')
+def get_settings_current_limit():
+    """
+    @brief Get the maximal current (amperage) limit per phase
+    """
+    return {'current_limit': api.state.charger.read_float(0x0302)}
 
-@api.put('/setting/current/limit')
-def set_setting_current_limit(current_limit: float):
+@api.put('/settings/current-limit')
+def set_settings_current_limit(current_limit: float):
+    """
+    @brief Set the maximal current (amperage) limit per phase
+    """
     api.state.charger.write_float(0x0302, current_limit)
-    return get_setting_current_limit()
+    return get_settings_current_limit()
 
-@api.get('/actual/power/overall')
-def get_actual_power_overall():
-    return {'actual_power_overall': api.state.charger.read_float(0x0512)}
+@api.get('/sessions/current/power')
+def get_sessions_current_power():
+    """
+    @brief Get the power of the current charging session
+    """
+    return {'current_power': api.state.charger.read_float(0x0512)}
 
-@api.get('/session/current/limit')
-def get_session_current_limit():
-    return {'session_current_limit': api.state.charger.read_float(0x0B00)}
+@api.get('/sessions/current/energy')
+def get_sessions_current_energy():
+    """
+    @brief Get the total energy transferred during the current charging session
+    """
+    return {'current_energy': api.state.charger.read_float(0x0B02)}
 
-@api.get('/session/energy')
-def get_session_energy():
-    return {'session_energy': api.state.charger.read_float(0x0B02)}
-
-@api.get('/session/duration')
-def get_session_duration():
+@api.get('/sessions/current/duration')
+def get_sessions_current_duration():
+    """
+    @brief Get the duration of the current charging session
+    """
     return {'session_duration': api.state.charger.read_float(0x0B04)}
 
 def main():
