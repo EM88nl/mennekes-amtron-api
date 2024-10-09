@@ -42,7 +42,7 @@ def get_settings_current_limit():
     """
     Get the maximal current (amperage) limit per phase
     """
-    return {'current-limit': api.state.charger.read_float(0x0302)}
+    return {'current': api.state.charger.read_float(0x0302)}
 
 @api.put('/settings/current-limit')
 def set_settings_current_limit(current_limit: float):
