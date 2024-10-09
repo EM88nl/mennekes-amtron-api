@@ -22,7 +22,7 @@ def get_status_evse():
         7: 'Service mode',
     }
     data = api.state.charger.read_register(0x0100)
-    return {'evse_status': data, 'description': evse_statuses[data]}
+    return {'status': data, 'description': evse_statuses[data]}
 
 @api.get('/status/authorization')
 def get_status_authorization():
@@ -35,14 +35,14 @@ def get_status_authorization():
         2: 'Not authorized',
     }
     data = api.state.charger.read_register(0x0101)
-    return {'authorization_status': data, 'description': authorization_statuses[data]}
+    return {'status': data, 'description': authorization_statuses[data]}
 
 @api.get('/settings/current-limit')
 def get_settings_current_limit():
     """
     Get the maximal current (amperage) limit per phase
     """
-    return {'current_limit': api.state.charger.read_float(0x0302)}
+    return {'current-limit': api.state.charger.read_float(0x0302)}
 
 @api.put('/settings/current-limit')
 def set_settings_current_limit(current_limit: float):
@@ -57,21 +57,21 @@ def get_sessions_current_power():
     """
     Get the power of the current charging session
     """
-    return {'current_power': api.state.charger.read_float(0x0512)}
+    return {'power': api.state.charger.read_float(0x0512)}
 
 @api.get('/sessions/current/energy')
 def get_sessions_current_energy():
     """
     Get the total energy transferred during the current charging session
     """
-    return {'current_energy': api.state.charger.read_float(0x0B02)}
+    return {'energy': api.state.charger.read_float(0x0B02)}
 
 @api.get('/sessions/current/duration')
 def get_sessions_current_duration():
     """
     Get the duration of the current charging session
     """
-    return {'session_duration': api.state.charger.read_float(0x0B04)}
+    return {'duration': api.state.charger.read_float(0x0B04)}
 
 def main():
     parser = argparse.ArgumentParser(description='Unofficial Mennekes AMTRON API')
