@@ -54,6 +54,30 @@ def set_settings_current_limit(current_limit: float):
     api.state.charger.write_float(0x0302, current_limit)
     return get_settings_current_limit()
 
+@api.get('/settings/charging-release')
+def get_settings_charging_release():
+    """
+    Get the charging release mode
+    """
+    charging_release_modes = {
+        0: 'Charging not allowed',
+        1: 'Charging allowed',
+    }
+    data = api.state.charger.read_register(0x0304)
+    return {'mode': data, 'description': charging_release_modes[data]}
+
+@api.put('/settings/charging-release')
+def set_settings_charging_release(charging_release: int):
+    """
+    Set the charging release mode.
+    0: Charging not allowed
+    1: Charging allowed
+    """
+    if charging_release not in [0, 1]:
+        raise HTTPException(status_code=400, detail='Charging release mode must be 0 or 1')
+    api.state.charger.write_register(0x0304, charging_release)
+    return get_settings_charging_release()
+
 @api.get('/sessions/current/power')
 def get_sessions_current_power():
     """
