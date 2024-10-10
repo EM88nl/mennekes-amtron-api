@@ -1,6 +1,6 @@
 import argparse
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import minimalmodbus
 
 api = FastAPI()
@@ -49,6 +49,8 @@ def set_settings_current_limit(current_limit: float):
     """
     Set the maximal current (amperage) limit per phase
     """
+    if current_limit < 6 or current_limit > 16 and current_limit != 0:
+        raise HTTPException(status_code=400, detail='Current limit must be between 6 and 16 A, or 0 to disable current limiting')
     api.state.charger.write_float(0x0302, current_limit)
     return get_settings_current_limit()
 
