@@ -49,7 +49,8 @@ def set_settings_current_limit(current_limit: float):
     """
     Set the maximal current (amperage) limit per phase
     """
-    if current_limit < 6 or current_limit > 16 and current_limit != 0:
+    ipsilon = 0.1
+    if current_limit < 0 or (current_limit > 0 and current_limit < 6) or current_limit > 16:
         raise HTTPException(status_code=400, detail='Current limit must be between 6 and 16 A, or 0 to disable current limiting')
     api.state.charger.write_float(0x0302, current_limit)
     return get_settings_current_limit()
@@ -63,7 +64,7 @@ def get_settings_charging_release():
         0: 'Charging not allowed',
         1: 'Charging allowed',
     }
-    data = api.state.charger.read_register(0x0304)
+    data = api.state.charger.read_register(0x0D05)
     return {'mode': data, 'description': charging_release_modes[data]}
 
 @api.put('/settings/charging-release')
@@ -75,7 +76,7 @@ def set_settings_charging_release(charging_release: int):
     """
     if charging_release not in [0, 1]:
         raise HTTPException(status_code=400, detail='Charging release mode must be 0 or 1')
-    api.state.charger.write_register(0x0304, charging_release)
+    api.state.charger.write_register(0x0D05, charging_release)
     return get_settings_charging_release()
 
 @api.get('/sessions/current/power')
